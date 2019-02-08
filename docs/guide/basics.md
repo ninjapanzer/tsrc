@@ -1,6 +1,7 @@
 # Basic tsrc usage
 
 
+
 ## Cloning a set of repositories
 
 `tsrc` is driven by a manifest file that contains the names and paths of repositories to clone.
@@ -33,23 +34,25 @@ In this example:
 * `foo` will be cloned in `<work>/foo` using `git@gitlab.local/acme/foo.git` origin url.
 * Similarly, `bar` will be cloned in `<work>/bar` using `git@gitlab.local:acme/bar.git`.
 
+!!! note
+    For any command that requires a workspace to exist (`foreach`, `log`, etc.),
+    you can run `tsrc` from anywhere in the workspace, not just at the top:
+    tsrc will walk up the filesystem looking for a workspace root.
 
 ## Making sure all the repositories are up to date
 
 You can update all the repositories by using `tsrc sync`.
 
-* The manifest itself will be updated first.
-* If a new repository has been added to the manifest, it will be cloned.
-* Lastly, the other repositories will be updated.
+* The manifest itself is updated first.
+* If a new repository has been added to the manifest, it is cloned.
+* If a repository has been cloned in the workspace but *removed* from the manifest, it simply
+  gets ignored.
+* Lastly, the other repositories are updated.
 
-Note that `tsrc sync` only updates the repositories if the changes are trivial:
+Note that `tsrc sync` only updates the repositories if the changes are trivial. tsrc will not touch any repository if:
 
-* If the branch has diverged, `tsrc` will do nothing. It's up to you to use
-  `rebase` or `merge`.
-* Ditto if there is no remote tracking branch.
+* The repository is dirty
+* The local branch has diverged from upstream
+* There is no remote tracking branch
 
 
-!!! note
-    Like `git`, tsrc will walk up the folders hierarchy looking for a `.tsrc`
-    folder, which means you can run tsrc commands anywhere in your workspace, not
-    just at the top.
